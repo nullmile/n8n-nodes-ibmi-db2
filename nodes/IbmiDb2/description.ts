@@ -1,4 +1,5 @@
 import { INodeTypeDescription, NodeConnectionTypes } from "n8n-workflow";
+import { properties } from './description/properties'
 
 const description: INodeTypeDescription = {
     displayName: 'DB2 for IBM i',
@@ -6,6 +7,7 @@ const description: INodeTypeDescription = {
     icon: 'file:../../icons/ibmDb2.svg',
     group: ['input'],
     version: 1,
+    subtitle: '={{$parameter["operation"]}}',
     description: 'Interact with DB2 for IBM i',
     defaults: {
         name: 'DB2 for IBM i'
@@ -19,7 +21,7 @@ const description: INodeTypeDescription = {
         }
     ],
     usableAsTool: true,
-    properties: []
+    properties
 };
 
 export { description };

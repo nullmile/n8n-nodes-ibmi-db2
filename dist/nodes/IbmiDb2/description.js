@@ -2,12 +2,14 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.description = void 0;
 const n8n_workflow_1 = require("n8n-workflow");
+const properties_1 = require("./description/properties");
 const description = {
     displayName: 'DB2 for IBM i',
     name: 'ibmiDb2',
     icon: 'file:../../icons/ibmDb2.svg',
     group: ['input'],
     version: 1,
+    subtitle: '={{$parameter["operation"]}}',
     description: 'Interact with DB2 for IBM i',
     defaults: {
         name: 'DB2 for IBM i'
@@ -21,7 +23,7 @@ const description = {
         }
     ],
     usableAsTool: true,
-    properties: []
+    properties: properties_1.properties
 };
 exports.description = description;
 //# sourceMappingURL=description.js.map

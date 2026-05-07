@@ -1,0 +1,1 @@
+{"version":3,"file":"propertiesExecuteSql.js","sourceRoot":"","sources":["../../../../nodes/IbmiDb2/description/propertiesExecuteSql.ts"],"names":[],"mappings":";;;AAEA,MAAM,UAAU,GAAsB;IAClC;QACI,IAAI,EAAE,KAAK;QACX,OAAO,EAAE,EAAE;QACX,WAAW,EAAE,KAAK;QAClB,IAAI,EAAE,QAAQ;KACjB;CACJ,CAAA;AAEQ,gCAAU"}

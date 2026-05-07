@@ -6,7 +6,21 @@ class IbmiDb2Api {
         this.name = 'ibmiDb2Api';
         this.displayName = 'DB2 for IBM i API';
         this.icon = 'file:../icons/ibmDb2.svg';
-        this.properties = [];
+        this.properties = [
+            {
+                displayName: 'User',
+                name: 'user',
+                type: 'string',
+                default: ''
+            },
+            {
+                displayName: 'Password',
+                name: 'password',
+                type: 'string',
+                typeOptions: { password: true },
+                default: ''
+            }
+        ];
     }
 }
 exports.IbmiDb2Api = IbmiDb2Api;

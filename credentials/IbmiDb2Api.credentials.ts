@@ -1,4 +1,4 @@
-import { Icon, ICredentialType } from "n8n-workflow";
+import { Icon, ICredentialType, INodeProperties } from "n8n-workflow";
 
 export class IbmiDb2Api implements ICredentialType {
     name = 'ibmiDb2Api';
@@ -7,5 +7,19 @@ export class IbmiDb2Api implements ICredentialType {
 
     icon: Icon = 'file:../icons/ibmDb2.svg';
 
-    properties = [];
+    properties: INodeProperties[] = [
+        {
+            displayName: 'User',
+            name: 'user',
+            type: 'string',
+            default: ''
+        },
+        {
+            displayName: 'Password',
+            name: 'password',
+            type: 'string',
+            typeOptions: { password: true },
+            default: ''
+        }
+    ];
 }
