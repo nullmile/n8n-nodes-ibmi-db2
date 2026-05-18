@@ -1,5 +1,11 @@
-import { EngineResponse, IExecuteFunctions, INodeType, INodeTypeDescription, NodeOutput } from "n8n-workflow";
+import type { IExecuteFunctions, INodeType, INodeTypeDescription, NodeOutput } from 'n8n-workflow';
+import { ibmiDb2ConnectionTest } from './methods/credentialTest';
 export declare class IbmiDb2 implements INodeType {
     description: INodeTypeDescription;
-    execute(this: IExecuteFunctions, response?: EngineResponse): Promise<NodeOutput>;
+    methods: {
+        credentialTest: {
+            ibmiDb2ConnectionTest: typeof ibmiDb2ConnectionTest;
+        };
+    };
+    execute(this: IExecuteFunctions): Promise<NodeOutput>;
 }

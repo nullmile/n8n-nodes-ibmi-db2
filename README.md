@@ -1,46 +1,52 @@
 # n8n-nodes-ibmi-db2
 
-This is an n8n community node. It lets you use _app/service name_ in your n8n workflows.
-
-_App/service name_ is _one or two sentences describing the service this node integrates with_.
+This is an n8n community node for working with DB2 for IBM i through `node-jt400`.
 
 [n8n](https://n8n.io/) is a [fair-code licensed](https://docs.n8n.io/sustainable-use-license/) workflow automation platform.
 
-[Installation](#installation)
-[Operations](#operations)
-[Credentials](#credentials)
-[Compatibility](#compatibility)
-[Usage](#usage)
-[Resources](#resources)
-[Version history](#version-history)
-
-## Installation
-
-Follow the [installation guide](https://docs.n8n.io/integrations/community-nodes/installation/) in the n8n community nodes documentation.
-
 ## Operations
 
-_List the operations supported by your node._
+- Select
+- Execute SQL
+- Update
+- Insert and Get ID
+- Insert List
+- Batch Update
+- Get Tables
+- Get Columns
+- Get Primary Keys
 
 ## Credentials
 
-_If users need to authenticate with the app/service, provide details here. You should include prerequisites (such as signing up with the service), available authentication methods, and how to set them up._
+Configure the IBM i host, user, password, and the IBM Toolbox JDBC options you need for the connection, including SSL, naming convention, libraries, database name, access mode, and date/time formatting.
 
-## Compatibility
+The credentials also expose **Inquiry Message Reply** handling. The default uses IBM i default replies so unattended workflows do not sit in `MSGW`; advanced setups can switch to the system reply list or keep the server job default.
 
-_State the minimum n8n version, as well as which versions you test against. You can also include any known version incompatibility issues._
+## SQL parameters
 
-## Usage
+For readable queries, prefer named placeholders:
 
-_This is an optional section. Use it to help users with any difficult or confusing aspects of the node._
+```sql
+SELECT * FROM MYLIB.CUSTOMERS WHERE STATUS = :status AND ID = :customerID
+```
 
-_By the time users are looking for community nodes, they probably already know n8n basics. But if you expect new users, you can link to the [Try it out](https://docs.n8n.io/try-it-out/) documentation to help them get started._
+```json
+{ "status": "active", "customerID": 101 }
+```
+
+Positional `?` placeholders with JSON arrays are still supported for existing workflows.
+
+## Transactions
+
+Write operations expose a **Transaction Mode** option:
+
+- **Disabled** keeps the current behavior.
+- **Commit on Success** commits only if the operation completes successfully and rolls back on errors.
+- **Always Roll Back (Test Run)** executes the statement but always rolls it back, which is useful for checking affected rows before letting a change persist.
+
+Transactions are applied per operation and per input item.
 
 ## Resources
 
-* [n8n community nodes documentation](https://docs.n8n.io/integrations/#community-nodes)
-* _Link to app/service documentation._
-
-## Version history
-
-_This is another optional section. If your node has multiple versions, include a short description of available versions and what changed, as well as any compatibility impact._
+- [n8n community nodes documentation](https://docs.n8n.io/integrations/#community-nodes)
+- [IBM i documentation](https://www.ibm.com/docs/en/i)

@@ -1,3 +1,3 @@
-import { EngineResponse, IExecuteFunctions, NodeOutput } from "n8n-workflow";
-declare function router(paramsthis: IExecuteFunctions, response?: EngineResponse): Promise<NodeOutput>;
-export { router };
+import type { IDataObject, IExecuteFunctions } from 'n8n-workflow';
+import { type Operation } from './operations';
+export declare function routeOperation(context: IExecuteFunctions, operation: Operation, itemIndex: number): Promise<IDataObject[]>;
