@@ -1,6 +1,7 @@
 import type { INodeProperties } from 'n8n-workflow';
 
 import { OPERATIONS } from '../operations';
+import { sqlParametersField } from './parameterFields.description';
 
 export const updateRowsFields: INodeProperties[] = [
 	{
@@ -24,17 +25,10 @@ export const updateRowsFields: INodeProperties[] = [
 		},
 	},
 	{
-		displayName: 'Parameters',
-		name: 'parameters',
-		type: 'json',
-		default: '[]',
-		placeholder: '{"status": "active", "customerID": 101}',
-		description: 'Optional SQL parameters as JSON',
-		hint: 'Use named objects with :placeholders, or arrays for positional ? placeholders.',
-		displayOptions: {
+		...sqlParametersField({
 			show: {
 				operation: [OPERATIONS.UPDATE],
 			},
-		},
+		}),
 	},
 ];

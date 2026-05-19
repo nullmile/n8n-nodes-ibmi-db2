@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.insertListFields = void 0;
 const operations_1 = require("../operations");
+const parameterFields_description_1 = require("./parameterFields.description");
 exports.insertListFields = [
     {
         displayName: 'Table Name',
@@ -33,19 +34,11 @@ exports.insertListFields = [
         },
     },
     {
-        displayName: 'Rows',
-        name: 'rows',
-        type: 'json',
-        default: '[]',
-        required: true,
-        placeholder: '[{"NAME":"Mario Rossi","EMAIL":"mario@example.com"}]',
-        description: 'Rows to insert as a JSON array of objects',
-        hint: 'Each object becomes one row; object keys are column names.',
-        displayOptions: {
+        ...(0, parameterFields_description_1.insertRowsField)({
             show: {
                 operation: [operations_1.OPERATIONS.INSERT_LIST],
             },
-        },
+        }),
     },
 ];
 //# sourceMappingURL=insertList.description.js.map

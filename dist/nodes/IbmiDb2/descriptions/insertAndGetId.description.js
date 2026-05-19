@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.insertAndGetIdFields = void 0;
 const operations_1 = require("../operations");
+const parameterFields_description_1 = require("./parameterFields.description");
 exports.insertAndGetIdFields = [
     {
         displayName: 'Insert SQL',
@@ -24,18 +25,11 @@ exports.insertAndGetIdFields = [
         },
     },
     {
-        displayName: 'Parameters',
-        name: 'parameters',
-        type: 'json',
-        default: '[]',
-        placeholder: '{"name": "Mario Rossi", "email": "mario@example.com"}',
-        description: 'Optional SQL parameters as JSON',
-        hint: 'Use named objects with :placeholders, or arrays for positional ? placeholders.',
-        displayOptions: {
+        ...(0, parameterFields_description_1.sqlParametersField)({
             show: {
                 operation: [operations_1.OPERATIONS.INSERT_AND_GET_ID],
             },
-        },
+        }),
     },
 ];
 //# sourceMappingURL=insertAndGetId.description.js.map

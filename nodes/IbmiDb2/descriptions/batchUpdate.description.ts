@@ -1,6 +1,7 @@
 import type { INodeProperties } from 'n8n-workflow';
 
 import { OPERATIONS } from '../operations';
+import { batchParameterSetsField } from './parameterFields.description';
 
 export const batchUpdateFields: INodeProperties[] = [
 	{
@@ -24,18 +25,10 @@ export const batchUpdateFields: INodeProperties[] = [
 		},
 	},
 	{
-		displayName: 'Parameter Sets',
-		name: 'parameterSets',
-		type: 'json',
-		default: '[]',
-		required: true,
-		placeholder: '[{"status":"active","customerID":101},{"status":"inactive","customerID":102}]',
-		description: 'JSON array of parameter sets',
-		hint: 'Use objects with named placeholders, or inner arrays with positional ? placeholders.',
-		displayOptions: {
+		...batchParameterSetsField({
 			show: {
 				operation: [OPERATIONS.BATCH_UPDATE],
 			},
-		},
+		}),
 	},
 ];

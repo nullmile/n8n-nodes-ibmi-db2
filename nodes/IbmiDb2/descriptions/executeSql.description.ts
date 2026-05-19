@@ -1,6 +1,7 @@
 import type { INodeProperties } from 'n8n-workflow';
 
 import { OPERATIONS } from '../operations';
+import { sqlParametersField } from './parameterFields.description';
 
 export const executeSqlFields: INodeProperties[] = [
 	{
@@ -24,17 +25,10 @@ export const executeSqlFields: INodeProperties[] = [
 		},
 	},
 	{
-		displayName: 'Parameters',
-		name: 'parameters',
-		type: 'json',
-		default: '[]',
-		placeholder: '{"customerID": 101}',
-		description: 'Optional SQL parameters as JSON',
-		hint: 'Use {"customerID": 101} with :customerID placeholders, or [101] with positional ? placeholders.',
-		displayOptions: {
+		...sqlParametersField({
 			show: {
 				operation: [OPERATIONS.EXECUTE_SQL],
 			},
-		},
+		}),
 	},
 ];

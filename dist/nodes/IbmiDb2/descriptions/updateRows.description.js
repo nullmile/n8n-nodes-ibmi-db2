@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateRowsFields = void 0;
 const operations_1 = require("../operations");
+const parameterFields_description_1 = require("./parameterFields.description");
 exports.updateRowsFields = [
     {
         displayName: 'Update SQL',
@@ -24,18 +25,11 @@ exports.updateRowsFields = [
         },
     },
     {
-        displayName: 'Parameters',
-        name: 'parameters',
-        type: 'json',
-        default: '[]',
-        placeholder: '{"status": "active", "customerID": 101}',
-        description: 'Optional SQL parameters as JSON',
-        hint: 'Use named objects with :placeholders, or arrays for positional ? placeholders.',
-        displayOptions: {
+        ...(0, parameterFields_description_1.sqlParametersField)({
             show: {
                 operation: [operations_1.OPERATIONS.UPDATE],
             },
-        },
+        }),
     },
 ];
 //# sourceMappingURL=updateRows.description.js.map

@@ -8,6 +8,23 @@ const INTEGER_TYPES = new Set(['SMALLINT', 'INTEGER']);
 const FLOAT_TYPES = new Set(['REAL', 'FLOAT', 'DOUBLE']);
 const BOOLEAN_TYPES = new Set(['BOOLEAN']);
 
+const LEGACY_JSON_PARAMETER_NAMES: Record<string, string> = {
+	parametersUi: 'parameters',
+	parameterSetsUi: 'parameterSets',
+	rowsUi: 'rows',
+};
+
+type ParameterField = {
+	name?: unknown;
+	setNumber?: unknown;
+	rowNumber?: unknown;
+	column?: unknown;
+	valueType?: unknown;
+	valueString?: unknown;
+	valueNumber?: unknown;
+	valueJson?: unknown;
+};
+
 export function getRequiredString(
 	context: IExecuteFunctions,
 	name: string,
@@ -26,12 +43,32 @@ export function getRequiredString(
 export function getSqlParameters(
 	context: IExecuteFunctions,
 	itemIndex: number,
-	name = 'parameters',
+	name = 'parametersUi',
 ): Param[] {
-	const value = parseJsonParameter(context, name, itemIndex);
+	const fields = getParameterFields(context, name, itemIndex);
+
+	if (fields.length > 0) {
+		return fields.map((field, index) => {
+			const parameterName = getOptionalString(field.name);
+
+			if (parameterName !== '') {
+				throw new NodeOperationError(
+					context.getNode(),
+					'Positional ? parameters must not use Name. Sort the parameter fields in placeholder order instead.',
+					{ itemIndex },
+				);
+			}
+
+			return parseParameterFieldValue(context, field, itemIndex, `parameters[${index}]`);
+		});
+	}
+
+	const value = parseJsonParameter(context, getLegacyJsonParameterName(name), itemIndex);
 
 	if (!Array.isArray(value)) {
-		throw new NodeOperationError(context.getNode(), 'Parameters must be a JSON array.', { itemIndex });
+		throw new NodeOperationError(context.getNode(), 'Positional ? parameters must be a list of values.', {
+			itemIndex,
+		});
 	}
 
 	return value.map((parameter, index) => parseParam(context, parameter, itemIndex, `parameters[${index}]`));
@@ -41,7 +78,7 @@ export function prepareSqlParameters(
 	context: IExecuteFunctions,
 	sql: string,
 	itemIndex: number,
-	name = 'parameters',
+	name = 'parametersUi',
 ): { sql: string; parameters: Param[] } {
 	const placeholders = replaceNamedPlaceholders(sql);
 
@@ -57,12 +94,16 @@ export function prepareSqlParameters(
 		);
 	}
 
-	const value = parseJsonParameter(context, name, itemIndex);
+	const fields = getParameterFields(context, name, itemIndex);
+	const value =
+		fields.length > 0
+			? getNamedParameterValues(context, fields, itemIndex, name)
+			: parseJsonParameter(context, getLegacyJsonParameterName(name), itemIndex);
 
 	if (!isPlainObject(value)) {
 		throw new NodeOperationError(
 			context.getNode(),
-			'Named SQL placeholders require Parameters to be a JSON object, for example {"id": 101}.',
+			'Named SQL placeholders require Parameters to provide named values, for example customerID = 101.',
 			{ itemIndex },
 		);
 	}
@@ -78,12 +119,37 @@ export function prepareSqlParameters(
 export function getBatchParameters(
 	context: IExecuteFunctions,
 	itemIndex: number,
-	name = 'parameterSets',
+	name = 'parameterSetsUi',
 ): Param[][] {
-	const value = parseJsonParameter(context, name, itemIndex);
+	const fields = getParameterFields(context, name, itemIndex);
+
+	if (fields.length > 0) {
+		return getParameterSetFields(context, fields, itemIndex, name).map(({ fields: parameterFields, setNumber }) =>
+			parameterFields.map((field, columnIndex) => {
+				const parameterName = getOptionalString(field.name);
+
+				if (parameterName !== '') {
+					throw new NodeOperationError(
+						context.getNode(),
+						'Positional ? parameter sets must not use Name. Sort each set in placeholder order instead.',
+						{ itemIndex },
+					);
+				}
+
+				return parseParameterFieldValue(
+					context,
+					field,
+					itemIndex,
+					`parameterSets[${setNumber}][${columnIndex}]`,
+				);
+			}),
+		);
+	}
+
+	const value = parseJsonParameter(context, getLegacyJsonParameterName(name), itemIndex);
 
 	if (!Array.isArray(value)) {
-		throw new NodeOperationError(context.getNode(), 'Parameter Sets must be a JSON array.', {
+		throw new NodeOperationError(context.getNode(), 'Parameter Sets must be a list of rows.', {
 			itemIndex,
 		});
 	}
@@ -92,7 +158,7 @@ export function getBatchParameters(
 		if (!Array.isArray(parameterSet)) {
 			throw new NodeOperationError(
 				context.getNode(),
-				`Parameter Sets row ${rowIndex + 1} must be a JSON array.`,
+				`Parameter Sets row ${rowIndex + 1} must be a list of values.`,
 				{ itemIndex },
 			);
 		}
@@ -107,7 +173,7 @@ export function prepareBatchParameters(
 	context: IExecuteFunctions,
 	sql: string,
 	itemIndex: number,
-	name = 'parameterSets',
+	name = 'parameterSetsUi',
 ): { sql: string; parameterSets: Param[][] } {
 	const placeholders = replaceNamedPlaceholders(sql);
 
@@ -123,10 +189,14 @@ export function prepareBatchParameters(
 		);
 	}
 
-	const value = parseJsonParameter(context, name, itemIndex);
+	const fields = getParameterFields(context, name, itemIndex);
+	const value =
+		fields.length > 0
+			? getNamedParameterSetValues(context, fields, itemIndex, name)
+			: parseJsonParameter(context, getLegacyJsonParameterName(name), itemIndex);
 
 	if (!Array.isArray(value)) {
-		throw new NodeOperationError(context.getNode(), 'Parameter Sets must be a JSON array.', {
+		throw new NodeOperationError(context.getNode(), 'Parameter Sets must be a list of rows.', {
 			itemIndex,
 		});
 	}
@@ -137,7 +207,7 @@ export function prepareBatchParameters(
 			if (!isPlainObject(parameterSet)) {
 				throw new NodeOperationError(
 					context.getNode(),
-					`Parameter Sets row ${rowIndex + 1} must be an object when using named placeholders.`,
+					`Parameter Sets row ${rowIndex + 1} must provide named values.`,
 					{ itemIndex },
 				);
 			}
@@ -158,12 +228,47 @@ export function prepareBatchParameters(
 export function getInsertRows(
 	context: IExecuteFunctions,
 	itemIndex: number,
-	name = 'rows',
+	name = 'rowsUi',
 ): Record<string, Param>[] {
-	const value = parseJsonParameter(context, name, itemIndex);
+	const fields = getParameterFields(context, name, itemIndex);
+
+	if (fields.length > 0) {
+		return getRowFields(context, fields, itemIndex, name).map(({ fields: rowFields, rowNumber }) => {
+			const row: Record<string, Param> = {};
+
+			for (const [fieldIndex, field] of rowFields.entries()) {
+				const column = getOptionalString(field.column);
+
+				if (column === '') {
+					throw new NodeOperationError(context.getNode(), `Rows row ${rowNumber} column is required.`, {
+						itemIndex,
+					});
+				}
+
+				if (column in row) {
+					throw new NodeOperationError(
+						context.getNode(),
+						`Rows row ${rowNumber} contains duplicate column "${column}".`,
+						{ itemIndex },
+					);
+				}
+
+				row[column] = parseParameterFieldValue(
+					context,
+					field,
+					itemIndex,
+					`rows[${rowNumber}][${fieldIndex}]`,
+				);
+			}
+
+			return row;
+		});
+	}
+
+	const value = parseJsonParameter(context, getLegacyJsonParameterName(name), itemIndex);
 
 	if (!Array.isArray(value)) {
-		throw new NodeOperationError(context.getNode(), 'Rows must be a JSON array of objects.', {
+		throw new NodeOperationError(context.getNode(), 'Rows must be a list of objects.', {
 			itemIndex,
 		});
 	}
@@ -210,13 +315,179 @@ export async function collectStreamRows(
 	});
 }
 
-function parseJsonParameter(
+function getParameterFields(
 	context: IExecuteFunctions,
 	name: string,
 	itemIndex: number,
-): unknown {
-	const value = context.getNodeParameter(name, itemIndex);
+): ParameterField[] {
+	const value = context.getNodeParameter(name, itemIndex, { values: [] }) as unknown;
 
+	if (!isPlainObject(value)) {
+		return [];
+	}
+
+	const values = value.values;
+
+	if (!Array.isArray(values)) {
+		return [];
+	}
+
+	return values.filter(isPlainObject);
+}
+
+function getNamedParameterValues(
+	context: IExecuteFunctions,
+	fields: ParameterField[],
+	itemIndex: number,
+	path: string,
+): Record<string, Param> {
+	return fields.reduce<Record<string, Param>>((parameters, field, index) => {
+		const parameterName = getOptionalString(field.name);
+
+		if (parameterName === '') {
+			throw new NodeOperationError(context.getNode(), 'Named SQL parameters require Name.', {
+				itemIndex,
+			});
+		}
+
+		if (parameterName in parameters) {
+			throw new NodeOperationError(
+				context.getNode(),
+				`Parameters contains duplicate name "${parameterName}".`,
+				{ itemIndex },
+			);
+		}
+
+		parameters[parameterName] = parseParameterFieldValue(
+			context,
+			field,
+			itemIndex,
+			`${path}[${index}]`,
+		);
+		return parameters;
+	}, {});
+}
+
+function getNamedParameterSetValues(
+	context: IExecuteFunctions,
+	fields: ParameterField[],
+	itemIndex: number,
+	path: string,
+): Record<string, Param>[] {
+	return getParameterSetFields(context, fields, itemIndex, path).map(
+		({ fields: parameterFields, setNumber }) => {
+			const parameters: Record<string, Param> = {};
+
+			for (const [fieldIndex, field] of parameterFields.entries()) {
+				const parameterName = getOptionalString(field.name);
+
+				if (parameterName === '') {
+					throw new NodeOperationError(
+						context.getNode(),
+						`Parameter Sets row ${setNumber} requires Name for named SQL parameters.`,
+						{ itemIndex },
+					);
+				}
+
+				if (parameterName in parameters) {
+					throw new NodeOperationError(
+						context.getNode(),
+						`Parameter Sets row ${setNumber} contains duplicate name "${parameterName}".`,
+						{ itemIndex },
+					);
+				}
+
+				parameters[parameterName] = parseParameterFieldValue(
+					context,
+					field,
+					itemIndex,
+					`${path}[${setNumber}][${fieldIndex}]`,
+				);
+			}
+
+			return parameters;
+		},
+	);
+}
+
+function getParameterSetFields(
+	context: IExecuteFunctions,
+	fields: ParameterField[],
+	itemIndex: number,
+	path: string,
+): Array<{ setNumber: number; fields: ParameterField[] }> {
+	return groupFieldsByIndex(context, fields, itemIndex, path, 'setNumber', 'Set Number').map(
+		({ index, fields }) => ({ setNumber: index, fields }),
+	);
+}
+
+function getRowFields(
+	context: IExecuteFunctions,
+	fields: ParameterField[],
+	itemIndex: number,
+	path: string,
+): Array<{ rowNumber: number; fields: ParameterField[] }> {
+	return groupFieldsByIndex(context, fields, itemIndex, path, 'rowNumber', 'Row Number').map(
+		({ index, fields }) => ({ rowNumber: index, fields }),
+	);
+}
+
+function groupFieldsByIndex(
+	context: IExecuteFunctions,
+	fields: ParameterField[],
+	itemIndex: number,
+	path: string,
+	indexProperty: 'setNumber' | 'rowNumber',
+	indexLabel: string,
+): Array<{ index: number; fields: ParameterField[] }> {
+	const fieldGroups = new Map<number, ParameterField[]>();
+
+	for (const [fieldIndex, field] of fields.entries()) {
+		const index = getPositiveInteger(
+			context,
+			field[indexProperty],
+			itemIndex,
+			`${path}[${fieldIndex}].${indexLabel}`,
+		);
+		const fieldGroup = fieldGroups.get(index) ?? [];
+
+		fieldGroup.push(field);
+		fieldGroups.set(index, fieldGroup);
+	}
+
+	return Array.from(fieldGroups.entries())
+		.sort(([left], [right]) => left - right)
+		.map(([index, fields]) => ({ index, fields }));
+}
+
+function parseParameterFieldValue(
+	context: IExecuteFunctions,
+	field: ParameterField,
+	itemIndex: number,
+	path: string,
+): Param {
+	switch (field.valueType ?? 'string') {
+		case 'string':
+			return parseParam(context, field.valueString ?? '', itemIndex, path);
+		case 'number':
+			return parseParam(context, field.valueNumber, itemIndex, path);
+		case 'null':
+			return null;
+		case 'json':
+			return parseParam(context, parseJsonValue(context, field.valueJson, itemIndex, path), itemIndex, path);
+		default:
+			throw new NodeOperationError(context.getNode(), `${path} has an unsupported value type.`, {
+				itemIndex,
+			});
+	}
+}
+
+function parseJsonValue(
+	context: IExecuteFunctions,
+	value: unknown,
+	itemIndex: number,
+	path: string,
+): unknown {
 	if (typeof value !== 'string') {
 		return value;
 	}
@@ -224,8 +495,45 @@ function parseJsonParameter(
 	try {
 		return JSON.parse(value);
 	} catch {
-		throw new NodeOperationError(context.getNode(), `${name} must contain valid JSON.`, { itemIndex });
+		throw new NodeOperationError(context.getNode(), `${path} must contain valid JSON.`, {
+			itemIndex,
+		});
 	}
+}
+
+function parseJsonParameter(
+	context: IExecuteFunctions,
+	name: string,
+	itemIndex: number,
+): unknown {
+	const value = context.getNodeParameter(name, itemIndex, '[]');
+
+	return parseJsonValue(context, value, itemIndex, name);
+}
+
+function getLegacyJsonParameterName(name: string): string {
+	return LEGACY_JSON_PARAMETER_NAMES[name] ?? name;
+}
+
+function getPositiveInteger(
+	context: IExecuteFunctions,
+	value: unknown,
+	itemIndex: number,
+	path: string,
+): number {
+	const parsed = typeof value === 'number' ? value : Number(value);
+
+	if (!Number.isInteger(parsed) || parsed < 1) {
+		throw new NodeOperationError(context.getNode(), `${path} must be a positive integer.`, {
+			itemIndex,
+		});
+	}
+
+	return parsed;
+}
+
+function getOptionalString(value: unknown): string {
+	return typeof value === 'string' ? value.trim() : '';
 }
 
 function parseParam(

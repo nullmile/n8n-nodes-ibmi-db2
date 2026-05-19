@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.selectRowsFields = void 0;
 const operations_1 = require("../operations");
+const parameterFields_description_1 = require("./parameterFields.description");
 exports.selectRowsFields = [
     {
         displayName: 'SELECT SQL',
@@ -24,18 +25,11 @@ exports.selectRowsFields = [
         },
     },
     {
-        displayName: 'Parameters',
-        name: 'parameters',
-        type: 'json',
-        default: '[]',
-        placeholder: '{"status": "active"}',
-        description: 'Optional SQL parameters as JSON',
-        hint: 'Use {"status": "active"} with :status placeholders, or ["active"] with positional ? placeholders.',
-        displayOptions: {
+        ...(0, parameterFields_description_1.sqlParametersField)({
             show: {
                 operation: [operations_1.OPERATIONS.SELECT],
             },
-        },
+        }),
     },
 ];
 //# sourceMappingURL=selectRows.description.js.map

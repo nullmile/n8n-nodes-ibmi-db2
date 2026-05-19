@@ -1,6 +1,7 @@
 import type { INodeProperties } from 'n8n-workflow';
 
 import { OPERATIONS } from '../operations';
+import { insertRowsField } from './parameterFields.description';
 
 export const insertListFields: INodeProperties[] = [
 	{
@@ -33,18 +34,10 @@ export const insertListFields: INodeProperties[] = [
 		},
 	},
 	{
-		displayName: 'Rows',
-		name: 'rows',
-		type: 'json',
-		default: '[]',
-		required: true,
-		placeholder: '[{"NAME":"Mario Rossi","EMAIL":"mario@example.com"}]',
-		description: 'Rows to insert as a JSON array of objects',
-		hint: 'Each object becomes one row; object keys are column names.',
-		displayOptions: {
+		...insertRowsField({
 			show: {
 				operation: [OPERATIONS.INSERT_LIST],
 			},
-		},
+		}),
 	},
 ];
