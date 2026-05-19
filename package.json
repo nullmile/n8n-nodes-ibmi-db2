@@ -62,5 +62,8 @@
     },
     "dependencies": {
         "node-jt400": "^6.0.1"
+    },
+    "publishConfig": {
+        "access": "public"
     }
 }
