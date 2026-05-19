@@ -3,7 +3,7 @@
     "version": "0.1.0",
     "description": "n8n community node for DB2 for IBM i",
     "license": "MIT",
-    "homepage": "",
+    "homepage": "https://github.com/nullmile/n8n-nodes-ibmi-db2#readme",
     "keywords": [
         "n8n-community-node-package"
     ],
@@ -14,6 +14,9 @@
     "repository": {
         "type": "git",
         "url": "git+https://github.com/nullmile/n8n-nodes-ibmi-db2.git"
+    },
+    "bugs": {
+        "url": "https://github.com/nullmile/n8n-nodes-ibmi-db2/issues"
     },
     "scripts": {
         "build": "n8n-node build",
@@ -30,7 +33,7 @@
     ],
     "n8n": {
         "n8nNodesApiVersion": 1,
-        "strict": true,
+        "strict": false,
         "credentials": [
             "dist/credentials/IbmiDb2Api.credentials.js"
         ],
