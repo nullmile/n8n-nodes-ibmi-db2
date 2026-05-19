@@ -5,7 +5,15 @@
     "license": "MIT",
     "homepage": "https://github.com/nullmile/n8n-nodes-ibmi-db2#readme",
     "keywords": [
-        "n8n-community-node-package"
+        "n8n-community-node-package",
+        "n8n",
+        "n8n-node",
+        "ibm-i",
+        "ibmi",
+        "as400",
+        "db2",
+        "jt400",
+        "jdbc"
     ],
     "author": {
         "name": "Filippo Milesi",
@@ -29,7 +37,8 @@
         "dev:packaged": "bash ./scripts/start-packaged-test.sh"
     },
     "files": [
-        "dist"
+        "dist",
+        "CHANGELOG.md"
     ],
     "n8n": {
         "n8nNodesApiVersion": 1,
