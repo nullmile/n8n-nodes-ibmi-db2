@@ -21,7 +21,7 @@ export class IbmiDb2 implements INodeType {
 		group: ['input'],
 		version: 1,
 		subtitle:
-			'={{ ({ batchUpdate: "Batch Update", executeSql: "Execute SQL", getColumns: "Get Columns", getPrimaryKeys: "Get Primary Keys", getTables: "Get Tables", insertAndGetId: "Insert and Get ID", insertList: "Insert List", select: "Select", update: "Update" })[$parameter["operation"]] || $parameter["operation"] }}',
+			'={{ ({ batchUpdate: "Batch Update", executeSql: "Execute SQL", getColumns: "Get Columns", getPrimaryKeys: "Get Primary Keys", getTables: "Get Tables", insertAndGetId: "Insert and Get ID", insertList: "Insert List", select: "Select", update: "Update", upsertFromInput: "Upsert From Input" })[$parameter["operation"]] || $parameter["operation"] }}',
 		description: 'Interact with DB2 for IBM i',
 		defaults: {
 			name: 'DB2 for IBM i',

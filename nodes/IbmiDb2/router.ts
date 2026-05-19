@@ -10,6 +10,7 @@ import { insertAndGetId } from './actions/insertAndGetId';
 import { insertList } from './actions/insertList';
 import { selectRows } from './actions/selectRows';
 import { updateRows } from './actions/updateRows';
+import { upsertFromInput } from './actions/upsertFromInput';
 import { OPERATIONS, type Operation } from './operations';
 
 export async function routeOperation(
@@ -36,6 +37,8 @@ export async function routeOperation(
 			return await selectRows(context, itemIndex);
 		case OPERATIONS.UPDATE:
 			return await updateRows(context, itemIndex);
+		case OPERATIONS.UPSERT_FROM_INPUT:
+			return await upsertFromInput(context, itemIndex);
 		default:
 			throw new NodeOperationError(context.getNode(), `Unsupported operation: ${String(operation)}`, {
 				itemIndex,

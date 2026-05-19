@@ -8,5 +8,6 @@ export declare const OPERATIONS: {
     readonly INSERT_LIST: "insertList";
     readonly SELECT: "select";
     readonly UPDATE: "update";
+    readonly UPSERT_FROM_INPUT: "upsertFromInput";
 };
 export type Operation = (typeof OPERATIONS)[keyof typeof OPERATIONS];

@@ -11,6 +11,7 @@ const insertAndGetId_1 = require("./actions/insertAndGetId");
 const insertList_1 = require("./actions/insertList");
 const selectRows_1 = require("./actions/selectRows");
 const updateRows_1 = require("./actions/updateRows");
+const upsertFromInput_1 = require("./actions/upsertFromInput");
 const operations_1 = require("./operations");
 async function routeOperation(context, operation, itemIndex) {
     switch (operation) {
@@ -32,6 +33,8 @@ async function routeOperation(context, operation, itemIndex) {
             return await (0, selectRows_1.selectRows)(context, itemIndex);
         case operations_1.OPERATIONS.UPDATE:
             return await (0, updateRows_1.updateRows)(context, itemIndex);
+        case operations_1.OPERATIONS.UPSERT_FROM_INPUT:
+            return await (0, upsertFromInput_1.upsertFromInput)(context, itemIndex);
         default:
             throw new n8n_workflow_1.NodeOperationError(context.getNode(), `Unsupported operation: ${String(operation)}`, {
                 itemIndex,

@@ -8,6 +8,7 @@ const WRITE_OPERATIONS = [
     operations_1.OPERATIONS.INSERT_AND_GET_ID,
     operations_1.OPERATIONS.INSERT_LIST,
     operations_1.OPERATIONS.UPDATE,
+    operations_1.OPERATIONS.UPSERT_FROM_INPUT,
 ];
 exports.transactionFields = [
     {

@@ -10,6 +10,7 @@ const metadata_description_1 = require("./metadata.description");
 const selectRows_description_1 = require("./selectRows.description");
 const transaction_description_1 = require("./transaction.description");
 const updateRows_description_1 = require("./updateRows.description");
+const upsertFromInput_description_1 = require("./upsertFromInput.description");
 exports.operationFields = [
     {
         displayName: 'Operation',
@@ -70,8 +71,14 @@ exports.operationFields = [
                 action: 'Run an update',
                 description: 'Run an UPDATE, DELETE, or other write statement',
             },
+            {
+                name: 'Upsert From Input',
+                value: operations_1.OPERATIONS.UPSERT_FROM_INPUT,
+                action: 'Upsert rows from input data',
+                description: 'Insert or update rows using each input item as column values',
+            },
         ],
-        default: operations_1.OPERATIONS.SELECT,
+        default: 'select',
         noDataExpression: true,
     },
     ...batchUpdate_description_1.batchUpdateFields,
@@ -82,5 +89,6 @@ exports.operationFields = [
     ...selectRows_description_1.selectRowsFields,
     ...transaction_description_1.transactionFields,
     ...updateRows_description_1.updateRowsFields,
+    ...upsertFromInput_description_1.upsertFromInputFields,
 ];
 //# sourceMappingURL=operation.description.js.map

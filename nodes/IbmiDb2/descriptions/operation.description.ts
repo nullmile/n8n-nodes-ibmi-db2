@@ -9,6 +9,7 @@ import { metadataFields } from './metadata.description';
 import { selectRowsFields } from './selectRows.description';
 import { transactionFields } from './transaction.description';
 import { updateRowsFields } from './updateRows.description';
+import { upsertFromInputFields } from './upsertFromInput.description';
 
 export const operationFields: INodeProperties[] = [
 	{
@@ -70,8 +71,14 @@ export const operationFields: INodeProperties[] = [
 				action: 'Run an update',
 				description: 'Run an UPDATE, DELETE, or other write statement',
 			},
+			{
+				name: 'Upsert From Input',
+				value: OPERATIONS.UPSERT_FROM_INPUT,
+				action: 'Upsert rows from input data',
+				description: 'Insert or update rows using each input item as column values',
+			},
 		],
-		default: OPERATIONS.SELECT,
+		default: 'select',
 		noDataExpression: true,
 	},
 	...batchUpdateFields,
@@ -82,4 +89,5 @@ export const operationFields: INodeProperties[] = [
 	...selectRowsFields,
 	...transactionFields,
 	...updateRowsFields,
+	...upsertFromInputFields,
 ];

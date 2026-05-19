@@ -8,6 +8,7 @@ exports.prepareBatchParameters = prepareBatchParameters;
 exports.getInsertRows = getInsertRows;
 exports.collectRows = collectRows;
 exports.collectStreamRows = collectStreamRows;
+exports.parseParam = parseParam;
 const n8n_workflow_1 = require("n8n-workflow");
 const ROW_FETCH_BUFFER_SIZE = 1000;
 const INTEGER_TYPES = new Set(['SMALLINT', 'INTEGER']);

@@ -13,7 +13,7 @@ class IbmiDb2 {
             icon: { light: 'file:../../icons/ibmDb2.svg', dark: 'file:../../icons/ibmDb2.dark.svg' },
             group: ['input'],
             version: 1,
-            subtitle: '={{ ({ batchUpdate: "Batch Update", executeSql: "Execute SQL", getColumns: "Get Columns", getPrimaryKeys: "Get Primary Keys", getTables: "Get Tables", insertAndGetId: "Insert and Get ID", insertList: "Insert List", select: "Select", update: "Update" })[$parameter["operation"]] || $parameter["operation"] }}',
+            subtitle: '={{ ({ batchUpdate: "Batch Update", executeSql: "Execute SQL", getColumns: "Get Columns", getPrimaryKeys: "Get Primary Keys", getTables: "Get Tables", insertAndGetId: "Insert and Get ID", insertList: "Insert List", select: "Select", update: "Update", upsertFromInput: "Upsert From Input" })[$parameter["operation"]] || $parameter["operation"] }}',
             description: 'Interact with DB2 for IBM i',
             defaults: {
                 name: 'DB2 for IBM i',

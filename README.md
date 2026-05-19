@@ -11,6 +11,7 @@ This is an n8n community node for working with DB2 for IBM i through `node-jt400
 - Update
 - Insert and Get ID
 - Insert List
+- Upsert From Input
 - Batch Update
 - Get Tables
 - Get Columns
@@ -35,6 +36,10 @@ SELECT * FROM MYLIB.CUSTOMERS WHERE STATUS = :status AND ID = :customerID
 ```
 
 Positional `?` placeholders with JSON arrays are still supported for existing workflows.
+
+## Upsert From Input
+
+**Upsert From Input** uses each incoming item JSON object as the row data. Configure **Match Columns** with one or more comma-separated input columns; when a matching row exists, non-match columns are updated, otherwise the input row is inserted. Enable **Return Previous Rows** to include the rows as they were before the update.
 
 ## Transactions
 

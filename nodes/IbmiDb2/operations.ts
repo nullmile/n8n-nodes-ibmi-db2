@@ -8,6 +8,7 @@ export const OPERATIONS = {
 	INSERT_LIST: 'insertList',
 	SELECT: 'select',
 	UPDATE: 'update',
+	UPSERT_FROM_INPUT: 'upsertFromInput',
 } as const;
 
 export type Operation = (typeof OPERATIONS)[keyof typeof OPERATIONS];

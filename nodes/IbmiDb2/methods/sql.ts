@@ -3,6 +3,8 @@ import { NodeOperationError } from 'n8n-workflow';
 
 import type { Metadata, Param, Statement } from 'node-jt400';
 
+export type { Param, Statement };
+
 const ROW_FETCH_BUFFER_SIZE = 1000;
 const INTEGER_TYPES = new Set(['SMALLINT', 'INTEGER']);
 const FLOAT_TYPES = new Set(['REAL', 'FLOAT', 'DOUBLE']);
@@ -536,7 +538,7 @@ function getOptionalString(value: unknown): string {
 	return typeof value === 'string' ? value.trim() : '';
 }
 
-function parseParam(
+export function parseParam(
 	context: IExecuteFunctions,
 	value: unknown,
 	itemIndex: number,

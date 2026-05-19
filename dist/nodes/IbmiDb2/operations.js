@@ -11,5 +11,6 @@ exports.OPERATIONS = {
     INSERT_LIST: 'insertList',
     SELECT: 'select',
     UPDATE: 'update',
+    UPSERT_FROM_INPUT: 'upsertFromInput',
 };
 //# sourceMappingURL=operations.js.map
