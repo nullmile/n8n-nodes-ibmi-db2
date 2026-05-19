@@ -6,7 +6,7 @@ class IbmiDb2Api {
         this.name = 'ibmiDb2Api';
         this.displayName = 'DB2 for IBM I API';
         this.documentationUrl = 'https://www.ibm.com/docs/ssw_ibm_i_74/rzahh/javadoc/com/ibm/as400/access/doc-files/JDBCProperties.html';
-        this.icon = 'file:../icons/ibmDb2.svg';
+        this.icon = { light: 'file:../icons/ibmDb2.svg', dark: 'file:../icons/ibmDb2.dark.svg' };
         this.properties = [
             {
                 displayName: 'Host',

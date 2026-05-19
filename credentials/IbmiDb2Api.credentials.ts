@@ -8,7 +8,7 @@ export class IbmiDb2Api implements ICredentialType {
 	documentationUrl =
 		'https://www.ibm.com/docs/ssw_ibm_i_74/rzahh/javadoc/com/ibm/as400/access/doc-files/JDBCProperties.html';
 
-	icon: Icon = 'file:../icons/ibmDb2.svg';
+	icon: Icon = { light: 'file:../icons/ibmDb2.svg', dark: 'file:../icons/ibmDb2.dark.svg' };
 
 	properties: INodeProperties[] = [
 		{

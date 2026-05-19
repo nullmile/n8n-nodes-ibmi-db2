@@ -54,7 +54,7 @@ export class IbmiDb2 implements INodeType {
 				const operation = this.getNodeParameter('operation', itemIndex) as Operation;
 				const results = await routeOperation(this, operation, itemIndex);
 
-				returnData.push(...toExecutionData(results, itemIndex));
+				appendExecutionData(returnData, results, itemIndex);
 			} catch (error) {
 				if (this.continueOnFail()) {
 					returnData.push({
@@ -72,11 +72,17 @@ export class IbmiDb2 implements INodeType {
 	}
 }
 
-function toExecutionData(results: IDataObject[], itemIndex: number): INodeExecutionData[] {
-	return results.map((json) => ({
-		json,
-		pairedItem: { item: itemIndex },
-	}));
+function appendExecutionData(
+	returnData: INodeExecutionData[],
+	results: IDataObject[],
+	itemIndex: number,
+): void {
+	for (const json of results) {
+		returnData.push({
+			json,
+			pairedItem: { item: itemIndex },
+		});
+	}
 }
 
 function getErrorMessage(error: unknown): string {

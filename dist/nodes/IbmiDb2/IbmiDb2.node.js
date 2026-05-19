@@ -43,7 +43,7 @@ class IbmiDb2 {
             try {
                 const operation = this.getNodeParameter('operation', itemIndex);
                 const results = await (0, router_1.routeOperation)(this, operation, itemIndex);
-                returnData.push(...toExecutionData(results, itemIndex));
+                appendExecutionData(returnData, results, itemIndex);
             }
             catch (error) {
                 if (this.continueOnFail()) {
@@ -60,11 +60,13 @@ class IbmiDb2 {
     }
 }
 exports.IbmiDb2 = IbmiDb2;
-function toExecutionData(results, itemIndex) {
-    return results.map((json) => ({
-        json,
-        pairedItem: { item: itemIndex },
-    }));
+function appendExecutionData(returnData, results, itemIndex) {
+    for (const json of results) {
+        returnData.push({
+            json,
+            pairedItem: { item: itemIndex },
+        });
+    }
 }
 function getErrorMessage(error) {
     return error instanceof Error ? error.message : 'Unknown error';
